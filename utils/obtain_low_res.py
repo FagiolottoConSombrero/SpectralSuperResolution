@@ -41,7 +41,7 @@ file_list = sorted([f for f in os.listdir(src_dir) if f.endswith('.mat') and not
 for idx, file_name in enumerate(file_list):
     file_path = os.path.join(src_dir, file_name)
     img, _ = read_h5(file_path, key="cube")
-
+    img = img[:, 1:481, 4:508]
     H, W, B = img.shape
     out_name = file_name.replace('.mat', '.h5')
     save_h5(os.path.join(dst_dir_original, out_name), img)
@@ -53,4 +53,4 @@ for idx, file_name in enumerate(file_list):
 
         save_h5(os.path.join(dst_dir, out_name), img_up)
 
-    print(f'✅ Processato {idx + 1}/{len(file_list)}: {file_name}')
+    print(f'Processato {idx + 1}/{len(file_list)}: {file_name}')

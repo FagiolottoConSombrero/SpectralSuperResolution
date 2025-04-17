@@ -36,7 +36,7 @@ class AradDataset(Dataset):
         x = self._load_h5(x_path)
         y = self._load_h5(y_path)
 
-        return x, y  # x = low-res, y = original
+        return x, y[:, 1:481, 4:508]  # x = low-res, y = original
 
     def _load_h5(self, path):
         with h5py.File(path, 'r') as f:
