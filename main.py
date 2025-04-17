@@ -1,4 +1,5 @@
 from models.mine import *
+from models.SPAN import *
 from engine import *
 from dataset import *
 import torch.optim as optim
@@ -22,15 +23,23 @@ def main():
     opt = parser.parse_args()
     print(opt)
 
-    print("===> Loading data")
-    train_set = AradDataset(opt.t_data_path)
-    train_loader = DataLoader(dataset=train_set, batch_size=opt.batch_size, shuffle=True)
+    # === Costruisci x_dir e y_dir automaticamente
+    train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
+    train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
+    val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
+    val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
-    valid_set = AradDataset(opt.v_data_path, train=False)
-    valid_loader = DataLoader(dataset=valid_set, batch_size=opt.batch_size, shuffle=True)
+    print("===> Loading data")
+    train_set = AradDataset(train_x, train_y)
+    train_loader = DataLoader(train_set, batch_size=opt.batch_size, shuffle=True)
+
+    valid_set = AradDataset(val_x, val_y)
+    valid_loader = DataLoader(valid_set, batch_size=opt.batch_size, shuffle=False)
 
     print("===> Building model")
     if opt.model == '1':
+        model = light_SPAN(31, 31)
+    elif opt.model == '2':
         model = SPAN(31, 31)
 
     model = model.to(opt.device)
@@ -41,14 +50,15 @@ def main():
 
     print("===> Starting Training")
     train(train_loader,
-            valid_loader,
-            model,
-            opt.epochs,
-            optimizer,
-            opt.device,
-            opt.save_path,
-            loss,
-            opt.lr)
+          valid_loader,
+          model,
+          opt.epochs,
+          optimizer,
+          opt.device,
+          opt.save_path,
+          loss,
+          opt.lr)
+
 
 
 if __name__ == "__main__":

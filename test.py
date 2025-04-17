@@ -4,7 +4,8 @@ import os
 import csv
 import numpy as np
 from dataset import AradDataset
-from models.mine import SPAN
+from models.mine import light_SPAN
+from models.SPAN import SPAN
 from metrics import evaluate_metrics
 from torch.utils.data import DataLoader
 
@@ -20,6 +21,9 @@ opt = parser.parse_args()
 
 print(opt)
 
+val_x = os.path.join(opt.data_path, 'val_arad1k_x4')
+val_y = os.path.join(opt.data_path, 'val_arad1k_original')
+
 # === Carica modello
 model = SPAN(31, 31)
 model.load_state_dict(torch.load(opt.model, weights_only=True))
@@ -27,7 +31,7 @@ model = model.to(opt.device)
 model.eval()
 
 # === Dataset e DataLoader
-test_set = AradDataset(opt.data_path, train=False)
+test_set = AradDataset(val_x, val_y)
 test_loader = DataLoader(test_set, batch_size=opt.batch_size, shuffle=False)
 
 # === Contatori metriche

@@ -91,25 +91,3 @@ def evaluate_metrics(X, Y, degrees=False):
         'SSIM': ssim(X, Y)
     }
 
-
-# === Nome base del file (senza estensione) ===
-hr = '/home/matteo/Documents/arad1k/h5/train/train_arad1k_original/ARAD_1K_0350.h5'
-x4 = '/home/matteo/Documents/arad1k/h5/train/train_arad1k_x4/ARAD_1K_0350.h5'
-x6 = '/home/matteo/Documents/arad1k/h5/train/train_arad1k_x6/ARAD_1K_0350.h5'
-x8 = '/home/matteo/Documents/arad1k/h5/train/train_arad1k_x8/ARAD_1K_0350.h5'
-
-
-with h5py.File(hr, 'r') as f:
-    hr = f['data'][()]  # [H, W, B]
-with h5py.File(x4, 'r') as f:
-    x4 = f['data'][()]  # [H, W, B]
-with h5py.File(x6, 'r') as f:
-    x6 = f['data'][()]  # [H, W, B]
-with h5py.File(x8, 'r') as f:
-    x8 = f['data'][()]  # [H, W, B]
-
-metrics = evaluate_metrics(x4, hr)
-print("SAM:", metrics['SAM'])
-print("PSNR:", metrics['PSNR'])
-print("SSIM:", metrics['SSIM'])
-
