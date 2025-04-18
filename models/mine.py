@@ -177,7 +177,7 @@ class SPAB(nn.Module):
         return out, out1, sim_att
 
 
-class SPAN(nn.Module):
+class light_SPAN(nn.Module):
     """
     Swift Parameter-free Attention Network for Efficient Super-Resolution
     """
@@ -188,7 +188,7 @@ class SPAN(nn.Module):
                  feature_channels=48,
                  bias=True,
                  ):
-        super(SPAN, self).__init__()
+        super(light_SPAN, self).__init__()
 
         in_channels = num_in_ch
         out_channels = num_out_ch

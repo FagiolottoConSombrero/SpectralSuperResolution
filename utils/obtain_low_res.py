@@ -21,12 +21,12 @@ def read_h5(path, key="cube"):
     return cube, wavelengths
 
 # === Directory sorgente e destinazioni ===
-src_dir = '/home/matteo/Documents/arad1k/Valid_spectral'
+src_dir = '/home/matteo/Documents/arad1k/mat/Valid_spectral'
 
-dst_dir_original = '/home/matteo/Documents/arad1k/val_arad1k_original'
-dst_dir_x2 = '/home/matteo/Documents/arad1k/val_arad1k_x4'
-dst_dir_x3 = '/home/matteo/Documents/arad1k/val_arad1k_x6'
-dst_dir_x4 = '/home/matteo/Documents/arad1k/val_arad1k_x8'
+dst_dir_original = '/home/matteo/Documents/arad1k/h5/val/val_arad1k_original'
+dst_dir_x2 = '/home/matteo/Documents/arad1k//h5/val/val_arad1k_x4'
+dst_dir_x3 = '/home/matteo/Documents/arad1k//h5/val/val_rad1k_x6'
+dst_dir_x4 = '/home/matteo/Documents/arad1k//h5/val/val_arad1k_x8'
 
 # === Crea le cartelle se non esistono ===
 os.makedirs(dst_dir_original, exist_ok=True)
@@ -42,14 +42,14 @@ for idx, file_name in enumerate(file_list):
     file_path = os.path.join(src_dir, file_name)
     img, _ = read_h5(file_path, key="cube")
     img = img[:, 1:481, 4:508]
-    H, W, B = img.shape
+    C, H, W = img.shape
     out_name = file_name.replace('.mat', '.h5')
     save_h5(os.path.join(dst_dir_original, out_name), img)
 
     for scale, dst_dir in zip([4, 6, 8], [dst_dir_x2, dst_dir_x3, dst_dir_x4]):
-        img_ds = resize(img, (H // scale, W // scale, B), order=0, preserve_range=True, anti_aliasing=False)
-        img_up = resize(img_ds, (H, W, B), order=0, preserve_range=True, anti_aliasing=False)
-        img_up = img_up.astype(img.dtype)
+        img_ds = resize(img, (C, H // scale, W // scale), order=0, preserve_range=True, anti_aliasing=False)
+        #img_up = resize(img_ds, (H, W, B), order=0, preserve_range=True, anti_aliasing=False)
+        img_up = img_ds.astype(img.dtype)
 
         save_h5(os.path.join(dst_dir, out_name), img_up)
 

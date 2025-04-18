@@ -235,9 +235,3 @@ class SPAN(nn.Module):
         output = self.upsampler(out)
 
         return output
-
-
-model = SPAN(31,31, upscale=6)
-input = torch.randn(1, 31, 80, 84)
-output = model(input)
-print(output.size())
