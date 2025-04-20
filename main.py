@@ -42,7 +42,7 @@ def main():
 
     print("===> Building model")
     if opt.model == '1':
-        model = light_SPAN(31, 31)
+        model = Spec_SPAN(31, 31)
     elif opt.model == '2':
         model = SPAN(31, 31)
     elif opt.model == '3':
