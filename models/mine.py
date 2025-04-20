@@ -227,7 +227,7 @@ class Spec_SPAN(nn.Module):
                  upscale=4,
                  bias=True
                  ):
-        super(SPAN, self).__init__()
+        super(Spec_SPAN, self).__init__()
 
         in_channels = num_in_ch
         out_channels = num_out_ch
