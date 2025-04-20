@@ -201,7 +201,4 @@ class ESSA(nn.Module):
         return x
 
 
-model = ESSA(inch=31, dim=256, upscale=4)
-x = torch.randn((1, 31, 120, 126))
-x = model(x)
-print(x.shape)
+#model = ESSA(inch=31, dim=256, upscale=4)

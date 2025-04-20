@@ -1,11 +1,15 @@
 from models.mine import *
 from models.SPAN import *
+from models.SSPSR import SSPSR
+from models.ESSAformer import ESSA
+from models.EDSR import EDSR
+from models.RCAN import RCAN
 from engine import *
 from dataset import *
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import argparse
-from torch.nn import MSELoss, SmoothL1Loss
+from torch.nn import MSELoss, SmoothL1Loss, L1Loss
 
 parser = argparse.ArgumentParser(description='Single Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
@@ -41,9 +45,17 @@ def main():
         model = light_SPAN(31, 31)
     elif opt.model == '2':
         model = SPAN(31, 31)
+    elif opt.model == '3':
+        model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=4, res_scale=0.1)
+    elif opt.model == '4':
+        model = ESSA(inch=31, dim=256, upscale=4)
+    elif opt.model == '5':
+        model = RCAN()
+    elif opt.model == '6':
+        model = EDSR()
 
     model = model.to(opt.device)
-    loss = SmoothL1Loss()
+    loss = L1Loss()
 
     print("===> Setting Optimizer")
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=1e-5)

@@ -232,7 +232,4 @@ class SSPSR(nn.Module):
         return y
 
 
-net = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=4, res_scale=0.1)
-img = torch.rand(1, 31, 120, 126)
-x = net(img)
-print(x.shape)
+#net = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=4, res_scale=0.1)

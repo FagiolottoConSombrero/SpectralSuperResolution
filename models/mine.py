@@ -3,6 +3,11 @@ import torch
 from torch import nn as nn
 import torch.nn.functional as F
 
+from collections import OrderedDict
+import torch
+from torch import nn as nn
+import torch.nn.functional as F
+
 def _make_pair(value):
     if isinstance(value, int):
         value = (value,) * 2
@@ -78,6 +83,37 @@ def sequential(*args):
             modules.append(module)
     return nn.Sequential(*modules)
 
+
+class CALayer(nn.Module):
+    def __init__(self, channel, reduction=16):
+        super(CALayer, self).__init__()
+        # global average pooling: feature --> point
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        # feature channel downscale and upscale --> channel weight
+        self.conv_du = nn.Sequential(
+                nn.Conv2d(channel, channel // reduction, 1, padding=0, bias=True),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(channel // reduction, channel, 1, padding=0, bias=True),
+                nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        y = self.avg_pool(x)
+        y = self.conv_du(y)
+        return x * y
+
+def pixelshuffle_block(in_channels,
+                       out_channels,
+                       upscale_factor=2,
+                       kernel_size=3):
+    """
+    Upsample features according to `upscale_factor`.
+    """
+    conv = conv_layer(in_channels,
+                      out_channels * (upscale_factor ** 2),
+                      kernel_size)
+    pixel_shuffle = nn.PixelShuffle(upscale_factor)
+    return sequential(conv, pixel_shuffle)
 
 class Conv3XC(nn.Module):
     def __init__(self, c_in, c_out, gain1=1, gain2=0, s=1, bias=True, relu=False):
@@ -161,6 +197,7 @@ class SPAB(nn.Module):
         self.c3_r = Conv3XC(mid_channels, out_channels, gain1=2, s=1)
         self.act1 = torch.nn.SiLU(inplace=True)
         self.act2 = activation('lrelu', neg_slope=0.1, inplace=True)
+        self.ca = CALayer(out_channels)
 
     def forward(self, x):
         out1 = (self.c1_r(x))
@@ -171,13 +208,14 @@ class SPAB(nn.Module):
 
         out3 = (self.c3_r(out2_act))
 
+        out3_ca = self.ca(out3)
+
         sim_att = torch.sigmoid(out3) - 0.5
         out = (out3 + x) * sim_att
 
         return out, out1, sim_att
 
-
-class light_SPAN(nn.Module):
+class Spec_SPAN(nn.Module):
     """
     Swift Parameter-free Attention Network for Efficient Super-Resolution
     """
@@ -186,9 +224,10 @@ class light_SPAN(nn.Module):
                  num_in_ch,
                  num_out_ch,
                  feature_channels=48,
-                 bias=True,
+                 upscale=4,
+                 bias=True
                  ):
-        super(light_SPAN, self).__init__()
+        super(SPAN, self).__init__()
 
         in_channels = num_in_ch
         out_channels = num_out_ch
@@ -196,20 +235,29 @@ class light_SPAN(nn.Module):
         self.conv_1 = Conv3XC(in_channels, feature_channels, gain1=2, s=1)
         self.block_1 = SPAB(feature_channels, bias=bias)
         self.block_2 = SPAB(feature_channels, bias=bias)
+        self.block_3 = SPAB(feature_channels, bias=bias)
+        self.block_4 = SPAB(feature_channels, bias=bias)
+        self.block_5 = SPAB(feature_channels, bias=bias)
+        self.block_6 = SPAB(feature_channels, bias=bias)
 
         self.conv_cat = conv_layer(feature_channels * 4, feature_channels, kernel_size=1, bias=True)
         self.conv_2 = Conv3XC(feature_channels, feature_channels, gain1=2, s=1)
 
-        self.final_layer = conv_layer(feature_channels, out_channels, kernel_size=1, bias=True)
+        self.upsampler = pixelshuffle_block(feature_channels, out_channels, upscale_factor=upscale)
 
     def forward(self, x):
         out_feature = self.conv_1(x)
 
         out_b1, _, att1 = self.block_1(out_feature)
-        out_b2, out_b1_2, att2 = self.block_2(out_b1)
+        out_b2, _, att2 = self.block_2(out_b1)
+        out_b3, _, att3 = self.block_3(out_b2)
 
-        out_b2 = self.conv_2(out_b2)
-        out = self.conv_cat(torch.cat([out_feature, out_b2, out_b1, out_b1_2], 1))
-        output = self.final_layer(out)
+        out_b4, _, att4 = self.block_4(out_b3)
+        out_b5, _, att5 = self.block_5(out_b4)
+        out_b6, out_b5_2, att6 = self.block_6(out_b5)
+
+        out_b6 = self.conv_2(out_b6)
+        out = self.conv_cat(torch.cat([out_feature, out_b6, out_b1, out_b5_2], 1))
+        output = self.upsampler(out)
 
         return output

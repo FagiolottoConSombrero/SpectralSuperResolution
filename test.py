@@ -6,12 +6,17 @@ import numpy as np
 from dataset import AradDataset
 from models.mine import light_SPAN
 from models.SPAN import SPAN
+from models.SSPSR import SSPSR
+from models.ESSAformer import ESSA
+from models.EDSR import EDSR
+from models.RCAN import RCAN
 from metrics import evaluate_metrics
 from torch.utils.data import DataLoader
 
 # === Argomenti da terminale
 parser = argparse.ArgumentParser(description='Super Resolution Test')
-parser.add_argument('--model', default='', type=str, help='model path')
+parser.add_argument('--model', default='1', type=str, help='model id')
+parser.add_argument('--model_path', default='', type=str, help='model path')
 parser.add_argument('--results', default='', type=str, help='results path')
 parser.add_argument('--device', type=str, default='cuda' if torch.cuda.is_available() else 'cpu',
                     help="Device to run the script on: 'cuda' or 'cpu'.")
@@ -25,11 +30,23 @@ val_x = os.path.join(opt.data_path, 'val_arad1k_x4')
 val_y = os.path.join(opt.data_path, 'val_arad1k_original')
 
 # === Carica modello
-model = SPAN(31, 31)
-model.load_state_dict(torch.load(opt.model, weights_only=True))
+print("===> Building model")
+if opt.model == '1':
+    model = light_SPAN(31, 31)
+elif opt.model == '2':
+    model = SPAN(31, 31)
+elif opt.model == '3':
+    model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=4, res_scale=0.1)
+elif opt.model == '4':
+    model = ESSA(inch=31, dim=256, upscale=4)
+elif opt.model == '5':
+    model = RCAN()
+elif opt.model == '6':
+    model = EDSR()
+
+model.load_state_dict(torch.load(opt.model_path, weights_only=True))
 model = model.to(opt.device)
 model.eval()
-
 # === Dataset e DataLoader
 test_set = AradDataset(val_x, val_y)
 test_loader = DataLoader(test_set, batch_size=opt.batch_size, shuffle=False)
