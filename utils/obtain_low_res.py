@@ -23,10 +23,10 @@ def read_h5(path, key="cube"):
 # === Directory sorgente e destinazioni ===
 src_dir = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/Train_spectral'
 
-dst_dir_original = '/home/acp/Scrivania/projects/matteo/h5/train/train_arad1k_original'
-dst_dir_x2 = '/home/acp/Scrivania/projects/matteo/h5/train/train_arad1k_x4'
-dst_dir_x3 = '/home/acp/Scrivania/projects/matteo/h5/train/train_rad1k_x6'
-dst_dir_x4 = '/home/acp/Scrivania/projects/matteo/h5/train/train_arad1k_x8'
+dst_dir_original = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/train/train_arad1k_original'
+dst_dir_x2 = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/train/train_arad1k_x4'
+dst_dir_x3 = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/train/train_rad1k_x6'
+dst_dir_x4 = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/train/train_arad1k_x8'
 
 # === Crea le cartelle se non esistono ===
 os.makedirs(dst_dir_original, exist_ok=True)
