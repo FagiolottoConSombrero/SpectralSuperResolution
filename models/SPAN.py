@@ -198,7 +198,7 @@ class SPAN(nn.Module):
                  num_in_ch,
                  num_out_ch,
                  feature_channels=48,
-                 upscale=4,
+                 upscale=6,
                  bias=True
                  ):
         super(SPAN, self).__init__()

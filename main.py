@@ -46,7 +46,7 @@ def main():
     elif opt.model == '2':
         model = SPAN(31, 31)
     elif opt.model == '3':
-        model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=4, res_scale=0.1)
+        model = SSPSR(n_subs=8, n_ovls=2, n_colors=31, n_blocks=3, n_feats=256, n_scale=6, res_scale=0.1)
     elif opt.model == '4':
         model = ESSA(inch=31, dim=126, upscale=4)
     elif opt.model == '5':

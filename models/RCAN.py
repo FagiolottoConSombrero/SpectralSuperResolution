@@ -97,7 +97,7 @@ class ResidualGroup(nn.Module):
 
 ## Residual Channel Attention Network (RCAN)
 class RCAN(nn.Module):
-    def __init__(self, n_resgroups=10, n_resblocks=20,  n_feats=64, reduction=16, scale=4, n_colors=31,  conv=default_conv):
+    def __init__(self, n_resgroups=10, n_resblocks=20,  n_feats=64, reduction=16, scale=6, n_colors=31,  conv=default_conv):
         super(RCAN, self).__init__()
 
         n_resgroups = n_resgroups
