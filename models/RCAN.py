@@ -24,6 +24,16 @@ class Upsampler(nn.Sequential):
             m.append(nn.PixelShuffle(3))
             if bn: m.append(nn.BatchNorm2d(n_feat))
             if act: m.append(act())
+        elif scale == 6:
+            # x2
+            m.append(conv(n_feat, 4 * n_feat, 3, bias))
+            m.append(nn.PixelShuffle(2))
+            # x3
+            m.append(conv(n_feat, 9 * n_feat, 3, bias))
+            m.append(nn.PixelShuffle(3))
+
+            if bn: m.append(nn.BatchNorm2d(n_feat))
+            if act: m.append(act())
         else:
             raise NotImplementedError
 
