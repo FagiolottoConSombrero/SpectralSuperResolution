@@ -61,7 +61,7 @@ def main():
         model = EDSR()
 
     model = model.to(opt.device)
-    loss = L1Loss()
+    loss = SmoothL1Loss()
 
     print("===> Setting Optimizer")
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=1e-5)
