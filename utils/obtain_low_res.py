@@ -21,7 +21,7 @@ def read_h5(path, key="cube"):
     return cube, wavelengths
 
 # === Directory sorgente e destinazioni ===
-src_dir = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/Valid_spectral'
+src_dir = '/home/matteo/Documents/arad1k/mat/Valid_spectral'
 
 dst_dir_original = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/val/val_arad1k_original'
 dst_dir_x2 = '/home/acp/Scrivania/datasets/SSD1/Arad-1K/val/val_arad1k_x4'

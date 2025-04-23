@@ -4,7 +4,7 @@ import os
 import csv
 import numpy as np
 from dataset import AradDataset
-from models.mine import light_SPAN
+from models.mine import Spec_SPAN
 from models.SPAN import SPAN
 from models.SSPSR import SSPSR
 from models.ESSAformer import ESSA
@@ -32,7 +32,7 @@ val_y = os.path.join(opt.data_path, 'val_arad1k_original')
 # === Carica modello
 print("===> Building model")
 if opt.model == '1':
-    model = light_SPAN(31, 31)
+    model = Spec_SPAN(31, 31)
 elif opt.model == '2':
     model = SPAN(31, 31)
 elif opt.model == '3':

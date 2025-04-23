@@ -58,29 +58,36 @@ def train(train_loader,
           device,
           best_model_path,
           criterion,
-          initial_lr,
-          patience=20):
+          patience=50,
+          scheduler=None):  # <--- aggiunto
+
     early_stopping = EarlyStopping(patience=patience, mode='min')
 
     for epoch in tqdm(range(epochs), desc="All"):
-        # Adjust learning rate
-        current_lr = adjust_learning_rate(optimizer, epoch, initial_lr)
-        print(f"Epoch: {epoch}, Learning Rate: {current_lr:.6f}\n-----------")
-        for param_group in optimizer.param_groups:
-            param_group["lr"] = current_lr
+        print(f"\nEpoch {epoch + 1}/{epochs}")
 
         train_loss = training_step(train_loader, model, optimizer, device, criterion)
         val_loss = validation_step(val_loader, model, device, criterion)
 
+        # Aggiorna lo scheduler solo se è ReduceLROnPlateau
+        if scheduler is not None:
+            if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                scheduler.step(val_loss)
+            else:
+                scheduler.step()
+
+        # Stampa il learning rate corrente
+        current_lr = optimizer.param_groups[0]['lr']
         print(
+            f"LR: {current_lr:.6f} | "
             f"Train loss: {train_loss:.8f} | "
-            f"Val loss: {val_loss:.8f} | "
+            f"Val loss: {val_loss:.8f}"
         )
-        print("-------------\n")
+        print("-------------")
 
         if check_early_stopping(val_loss, model, early_stopping, epoch, best_model_path):
             break
 
     # Ripristina i pesi migliori
     model.load_state_dict(torch.load(best_model_path))
-    print(f"Restored best model weights with val_loss: {early_stopping.best_val:.4f}")
+    print(f"Restored best model weights with val_loss: {early_stopping.best_val:.6f}")

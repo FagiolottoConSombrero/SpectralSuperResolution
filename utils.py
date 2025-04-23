@@ -15,10 +15,11 @@ def check_early_stopping(val_loss, model, early_stopping, epoch, best_model_path
         early_stopping.best_val = val_loss  # Aggiorna la migliore loss
         early_stopping.counter = 0  # Resetta il contatore
         torch.save(model.state_dict(), best_model_path)  # Salva i pesi migliori
-        print(f"Saved best model with val_loss: {val_loss:.4f} at epoch {epoch}")
+        print(f"Saved best model with val_loss: {val_loss:.8f} at epoch {epoch}")
         return False  # Non fermare il training
     else:
         early_stopping.counter += 1
+        print(f"No improvement. Counter: {early_stopping.counter}/{early_stopping.patience}")
         if early_stopping.counter >= early_stopping.patience:
             print(f"Early stopping at epoch {epoch} with best val_loss: {early_stopping.best_val:.4f}")
             return True  # Fermare il training
@@ -27,7 +28,7 @@ def check_early_stopping(val_loss, model, early_stopping, epoch, best_model_path
 
 def adjust_learning_rate(optimizer, epoch, initial_lr):
     """Sets the learning rate to the initial LR decayed by 10 every 10 epochs"""
-    lr = initial_lr * (0.1 ** (epoch // 30))
+    lr = initial_lr * (0.5 ** (epoch // 30))
     return lr
 
 class EarlyStopping():

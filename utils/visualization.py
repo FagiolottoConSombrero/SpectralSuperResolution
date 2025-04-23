@@ -4,17 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === Nome base del file (senza estensione) ===
-base_name = 'ARAD_1K_0350'
+base_name = 'ARAD_1K_0912'
 
 # === Cartelle dei file ===
-root_dir = '/home/matteo/Documents/arad1k/h5/train'
-src_mat_dir = os.path.join(root_dir, 'Train_spectral')
+root_dir = '/home/matteo/Documents/arad1k/h5/val'
+src_mat_dir = os.path.join(root_dir, 'Valid_spectral')
 
 paths = {
-    'Original': os.path.join(root_dir, 'train_arad1k_original', base_name + '.h5'),
-    'x4': os.path.join(root_dir, 'train_arad1k_x4', base_name + '.h5'),
-    'x6': os.path.join(root_dir, 'train_arad1k_x6', base_name + '.h5'),
-    'x8': os.path.join(root_dir, 'train_arad1k_x8', base_name + '.h5'),
+    'Original': os.path.join(root_dir, 'val_arad1k_original', base_name + '.h5'),
+    'x4': os.path.join(root_dir, 'val_arad1k_x4', base_name + '.h5'),
+    'x6': os.path.join(root_dir, 'val_rad1k_x6', base_name + '.h5'),
+    'x8': os.path.join(root_dir, 'val_arad1k_x8', base_name + '.h5'),
 }
 
 # === Funzione per leggere un file .h5 ===

@@ -10,9 +10,13 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import argparse
 from torch.nn import MSELoss, SmoothL1Loss, L1Loss
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 
 parser = argparse.ArgumentParser(description='Single Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
+parser.add_argument('--pretrained', type=bool, default=False, help='load pretrained model')
+parser.add_argument('--model_path', type=str, default='', help="path to pretrained model")
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
 parser.add_argument('--batch_size', type=int, default='2', help='Training batch size')
@@ -28,9 +32,9 @@ def main():
     print(opt)
 
     # === Costruisci x_dir e y_dir automaticamente
-    train_x = os.path.join(opt.t_data_path, 'train_rad1k_x6')
+    train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
-    val_x = os.path.join(opt.v_data_path, 'val_rad1k_x6')
+    val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
     print("===> Loading data")
@@ -43,6 +47,8 @@ def main():
     print("===> Building model")
     if opt.model == '1':
         model = Spec_SPAN(31, 31)
+        if opt.pretrained:
+            model.load_state_dict(torch.load(opt.model_path, weights_only=True))
     elif opt.model == '2':
         model = SPAN(31, 31)
     elif opt.model == '3':
@@ -60,6 +66,14 @@ def main():
     print("===> Setting Optimizer")
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=1e-5)
 
+    print("===> Setting Scheduler")
+    scheduler = ReduceLROnPlateau(
+        optimizer,
+        mode='min',
+        factor=0.5,
+        patience=10
+    )
+
     print("===> Starting Training")
     train(train_loader,
           valid_loader,
@@ -69,7 +83,7 @@ def main():
           opt.device,
           opt.save_path,
           loss,
-          opt.lr)
+          scheduler=scheduler)
 
 
 
