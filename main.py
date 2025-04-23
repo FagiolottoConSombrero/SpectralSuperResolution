@@ -61,7 +61,7 @@ def main():
         model = EDSR()
 
     model = model.to(opt.device)
-    loss = SmoothL1Loss()
+    loss = HybridLoss(spatial_tv=True, spectral_tv=True)
 
     print("===> Setting Optimizer")
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=1e-5)
