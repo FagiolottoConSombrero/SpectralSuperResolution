@@ -22,6 +22,7 @@ parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset pat
 parser.add_argument('--batch_size', type=int, default='2', help='Training batch size')
 parser.add_argument("--epochs", type=int, default=600, help="Number of epochs to train for")
 parser.add_argument("--lr", type=float, default=0.001, help="Learning Rate. Default=0.001")
+parser.add_argument("--loss", type=str, default='1', help="loss, default=L1")
 parser.add_argument('--save_path', type=str, default='', help="Path to model checkpoint")
 parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu",
                     help="Device to run the script on: 'cuda' or 'cpu'. ")
@@ -61,7 +62,12 @@ def main():
         model = EDSR()
 
     model = model.to(opt.device)
-    loss = HybridLoss(spatial_tv=True, spectral_tv=True)
+    if opt.loss == '1':
+        loss = L1Loss()
+    elif opt.loss == '2':
+        loss = SmoothL1Loss()
+    elif opt.loss == '3':
+        loss = HybridLoss(spatial_tv=True, spectral_tv=True)
 
     print("===> Setting Optimizer")
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, weight_decay=1e-5)
