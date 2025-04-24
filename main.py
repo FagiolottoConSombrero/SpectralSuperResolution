@@ -34,9 +34,9 @@ def main():
     print(opt)
 
     # === Costruisci x_dir e y_dir automaticamente
-    train_x = os.path.join(opt.t_data_path, 'train_arad1k_x4')
+    train_x = os.path.join(opt.t_data_path, 'train_arad1k_x6')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
-    val_x = os.path.join(opt.v_data_path, 'val_arad1k_x4')
+    val_x = os.path.join(opt.v_data_path, 'val_rad1k_x6')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
     print("===> Loading data")
