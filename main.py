@@ -16,6 +16,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 parser = argparse.ArgumentParser(description='Single Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
 parser.add_argument('--pretrained', type=bool, default=False, help='load pretrained model')
+parser.add_argument('--upscale', type=bool, default=4, help='increase upscale factor')
 parser.add_argument('--model_path', type=str, default='', help="path to pretrained model")
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
@@ -47,7 +48,7 @@ def main():
 
     print("===> Building model")
     if opt.model == '1':
-        model = Spec_SPAN(31, 31)
+        model = Spec_SPAN(num_in_ch=31, num_out_ch=31, upscale=opt.upscale)
         if opt.pretrained:
             model.load_state_dict(torch.load(opt.model_path, weights_only=True))
     elif opt.model == '2':
