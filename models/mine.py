@@ -206,7 +206,7 @@ class SPAB(nn.Module):
         out3_ca = self.ca(out3)
 
         sim_att = torch.sigmoid(out3) - 0.5
-        out = (out3 + x) * sim_att
+        out = (out3_ca + x) * sim_att
 
         return out, out1, sim_att
 
@@ -218,7 +218,7 @@ class Spec_SPAN(nn.Module):
     def __init__(self,
                  num_in_ch,
                  num_out_ch,
-                 feature_channels=64,
+                 feature_channels=48,
                  upscale=4,
                  bias=True
                  ):
@@ -250,11 +250,10 @@ class Spec_SPAN(nn.Module):
 
         out_b4, _, att4 = self.block_4(out_b3)
         out_b5, _, att5 = self.block_5(out_b4)
-        out_b6, _, att6 = self.block_6(out_b5)
-        out_b7, out_b6_2, att7 = self.block_7(out_b6)
+        out_b6, out_b5_2, att6 = self.block_6(out_b5)
 
-        out_b7 = self.conv_2(out_b7)
-        out = self.conv_cat(torch.cat([out_feature, out_b7, out_b1, out_b6_2], 1))
+        out_b6 = self.conv_2(out_b6)
+        out = self.conv_cat(torch.cat([out_feature, out_b6, out_b1, out_b5_2], 1))
         output = self.upsampler(out)
 
         return output
