@@ -16,7 +16,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 parser = argparse.ArgumentParser(description='Single Image Super Resolution')
 parser.add_argument('--model', type=str, default='1', help='model id')
 parser.add_argument('--pretrained', type=bool, default=False, help='load pretrained model')
-parser.add_argument('--upscale', type=bool, default=4, help='increase upscale factor')
+parser.add_argument('--upscale', type=int, default=4, help='increase upscale factor')
 parser.add_argument('--model_path', type=str, default='', help="path to pretrained model")
 parser.add_argument('--t_data_path', type=str, default='', help='Train Dataset path')
 parser.add_argument('--v_data_path', type=str, default='', help='Val Dataset path')
