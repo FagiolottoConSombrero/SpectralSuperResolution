@@ -63,7 +63,7 @@ def main():
     elif opt.model == '6':
         model = EDSR()
     elif opt.model == '7':
-        model = EffEDSR(n_resblocks=32, n_feats=256, scale=4)
+        model = EffEDSR(n_resblocks=16, n_feats=128, scale=4)
 
     model = model.to(opt.device)
     if opt.loss == '1':
