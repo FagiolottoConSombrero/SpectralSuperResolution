@@ -4,6 +4,7 @@ from models.SSPSR import SSPSR
 from models.ESSAformer import ESSA
 from models.EDSR import EDSR
 from models.RCAN import RCAN
+from models.EffficientEDSR import EffEDSR
 from engine import *
 from dataset import *
 import torch.optim as optim
@@ -34,9 +35,9 @@ def main():
     print(opt)
 
     # === Costruisci x_dir e y_dir automaticamente
-    train_x = os.path.join(opt.t_data_path, 'train_rad1k_x6')
+    train_x = os.path.join(opt.t_data_path, 'train_rad1k_x4')
     train_y = os.path.join(opt.t_data_path, 'train_arad1k_original')
-    val_x = os.path.join(opt.v_data_path, 'val_rad1k_x6')
+    val_x = os.path.join(opt.v_data_path, 'val_rad1k_x4')
     val_y = os.path.join(opt.v_data_path, 'val_arad1k_original')
 
     print("===> Loading data")
@@ -61,6 +62,8 @@ def main():
         model = RCAN()
     elif opt.model == '6':
         model = EDSR()
+    elif opt.model == '7':
+        model = EffEDSR(n_resblocks=32, n_feats=256, scale=4)
 
     model = model.to(opt.device)
     if opt.loss == '1':
